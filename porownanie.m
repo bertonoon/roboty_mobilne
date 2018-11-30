@@ -1,6 +1,12 @@
 % % config % %
 
-a = 0.2;
+%Mahony
+Ki = 0.8;
+Kp = 3;
+
+%Komplementarny
+a = 0.02;
+
 dt = 0.00816;
 
 % % % % % % % 
@@ -23,16 +29,24 @@ for i=2:length(ch1)
     calka2(i) = calka2(i-1) + ch5(i)*dt;
     calka3(i) = calka3(i-1) + ch6(i)*dt;
 end
-
-kom = zeros(length(ch1),1);
+kom = zeros(length(t),1);
 
 for i=2:length(kom)
-    acc =  atan2(ch1(i),ch3(i)) * 180 /pi ;
-    kom(i) = (1-a)*(kom(i-1) + ch5(i)*dt) + a*acc ;
+    acc = atan2(ch1(i),ch3(i)) * 180 /pi;
+    kom(i) = (1-a)*(kom(i-1) + ch5(i)*dt) + a*acc;
 end
-% plot(t,ch1,t,ch2,t,ch3)
-plot(t,calka2,t,kom);
+
+
+mah = zeros(length(ch1),1);
+I = zeros(length(ch1),1);
+alfa = 1 - Kp*dt;
+for i=2:length(kom)
+    acc =  atan2(ch1(i),ch3(i)) * 180 /pi ;
+    I(i) = I(i-1) + Ki*dt*(acc-mah(i-1));
+    mah(i) = alfa*mah(i-1) + (1-alfa)*acc + (ch5(i) + I(i))*dt;
+end
+plot(t,calka2,t,kom, t,mah);
 xlabel('Czas [s]')
 ylabel(['Wychylenie wokol osi Y [' char(176) ']'])
-legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego');
+legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego');
 grid on
