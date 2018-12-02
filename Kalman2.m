@@ -22,46 +22,49 @@ end
 A = [1 -dt; 0 1];
 B = [dt; 0];
 C = [1 0];
- 
+H = [1  1];
+
+
 %Szum 
-v = 1;
+v1 = 0.7;
+v2 = 0.3;
 w = 1;
-V = [v*v*dt 0; 0 v*v*dt];
-W = w*w;
- 
+
+V = [v1; v2];
+R = cov(v1,v2);
+
 x0 = [0; 0];
 P0 = [1 0; 0 1];
-xpri = x0;
-Ppri = P0;
-xpost = x0;
-Ppost = P0;
- 
+
+x_t1_t1 = x0;
+P_t1_t1 = P0;
+x_t_t = x0;
+P_t_t = P0;
+
+I = [1 0; 0 1];
 Y = zeros(1, size(t,2));
 Yf = Y;
+
  
 for i = 1:size(pomiar, 1);
-    %Obliczenie aktualnego kata na podstawie danych z akcelerometru
+    % Aktualne dane
     akcelerometr = atan2(ch3(i),ch1(i))*180/pi;
     zyroskop = ch5(i);
     Y(i) = zyroskop;
+    z_t = [akcelerometr; zyroskop] + V;
     
-    if i == 1;
-        xpost = [zyroskop; 0];
-    else
-        
-        xpri = A*xpost + B*akcelerometr;
-        Ppri = A*Ppost*A' + V;
-        
-        % aktualizacja pomiarow
-        eps = Y(i) - C*xpri;
-        S = C*Ppri*C' + W;
-        K = Ppri*C'*S^(-1);
-        xpost = xpri + K*eps;
-        Ppost = Ppri - K*S*K';
-    end
+    x_t_t1 = A*x_t1_t1 + B*akcelerometr;
+    P_t_t1 = P_t1_t1;
+    e_t = z_t - H*x_t_t1;
+    S_t = H*P_t_t1*H' + R;
+    K_t = P_t_t1*H*inv(S_t);
+    x_t_t = x_t_t1 + K_t*e_t;
+    P_t_t = (I - K_t*H)*P_t_t1;
     
-    %Zapis estymaty do wektora wynikow
- Yf(i) = xpost(1);
+    x_t1_t1 = x_t_t;
+    P_t1_t1 = P_t_t;
+    Yf(i) = x_t_t(1);
+    
 end
  
 plot(t, Y, 'b', t, Yf, 'r',t,calka2,'g')
@@ -69,3 +72,4 @@ title('Filtr Kalmana')
 xlabel('Czas')
 ylabel('Sygnal mierzony')
 legend('Akcelerometr', 'Filtr Kalmana', '?yroskop')
+
