@@ -1,26 +1,29 @@
 % % config % %
 
+%Komplementarny
+a = 0.02;
+
+
 %Mahony
 Ki = 0.8;
 Kp = 3;
 
-%Komplementarny
-a = 0.02;
 
-dt = 0.00408;
-
+%Kalman
+w = 25;
+v = 25;
 
 % GENEROWANIE DO PLIKU(ANIMACJA 3D)
 
-% 1 - komplementarny, 2 - Mahony
-typ_filtru = 1;
+% 1 - komplementarny, 2 - Mahony, 3 - Kalman
+typ_filtru = 3;
 
 
 % % % % % % % 
-
+dt = 0.00408;
 pomiar = csvread('pomiary.csv',0,0);
 pomiar = pomiar(2500:end,:);
-t = pomiar(:,1)*dt;
+t = (pomiar(:,1)-pomiar(1,1))*dt;
 ch1 = pomiar(:,2)*(2/(2^12)); % acc x (g)
 ch2 = pomiar(:,3)*(2/(2^12)); % acc y
 ch3 = pomiar(:,4)*(2/(2^12)); % acc z
@@ -36,6 +39,9 @@ for i=2:length(ch1)
     calka2(i) = calka2(i-1) + ch5(i)*dt;
     calka3(i) = calka3(i-1) + ch6(i)*dt;
 end
+
+
+% komplementarny
 komy = zeros(length(t),1);
 komx = zeros(length(t),1);
 
@@ -48,6 +54,8 @@ for i=2:length(komy)
     komx(i) = (1-a)*(komx(i-1) + ch4(i)*dt) + a*acc;
 end
 
+
+% Mahony
 mahy = zeros(length(ch1),1);
 mahx = zeros(length(ch1),1);
 I = zeros(length(ch1),1);
@@ -65,30 +73,107 @@ for i=2:length(komx)
 end
 
 
+% Kalman
+
+
+A = [1 -dt; 0 1];
+B = [dt; 0];
+C = [1 0];
+ 
+
+V = [v*v*dt 0; 0 v*v*dt];
+R = w*w;
+ 
+x0      = [0; 0];
+P0      = [1 0; 0 1];
+x_t_t1  = x0;
+P_t_t1  = P0;
+x_t_t   = x0;
+P_t_t   = P0;
+
+
+kalmany = zeros(1, size(t,2));
+kalmanx = zeros(1, size(t,2));
+ 
+for i = 1:size(pomiar, 1);
+    %Dane z ¿yroskopu i akcelerometru
+    akcelerometr = atan2(ch1(i),ch3(i))*180/pi;
+    zyroskop     = ch5(i);
+    
+    
+    % Inicjalizacja
+    if i == 1;
+        x_t_t   = [akcelerometr; 0];
+    else
+        
+        
+        x_t_t1  = A*x_t_t + B*zyroskop;
+        P_t_t1  = A*P_t_t*A' + V;
+        
+        e_t     = akcelerometr - C*x_t_t1;
+        S_t     = C*P_t_t1*C' + R;
+        K_t     = P_t_t1*C'*S_t^(-1);
+        x_t_t   = x_t_t1 + K_t*e_t;
+        P_t_t   = P_t_t1 - K_t*S_t*K_t';
+    end
+    
+    kalmany(i) = x_t_t(1);
+end
+for i = 1:size(pomiar, 1);
+    %Dane z ¿yroskopu i akcelerometru
+    akcelerometr = atan2(ch2(i),ch3(i))*180/pi;
+    zyroskop     = ch4(i);
+    
+    
+    % Inicjalizacja
+    if i == 1;
+        x_t_t   = [akcelerometr; 0];
+    else
+        
+        
+        x_t_t1  = A*x_t_t + B*zyroskop;
+        P_t_t1  = A*P_t_t*A' + V;
+        
+        e_t     = akcelerometr - C*x_t_t1;
+        S_t     = C*P_t_t1*C' + R;
+        K_t     = P_t_t1*C'*S_t^(-1);
+        x_t_t   = x_t_t1 + K_t*e_t;
+        P_t_t   = P_t_t1 - K_t*S_t*K_t';
+    end
+    
+    kalmanx(i) = x_t_t(1);
+end
+
 figure(1)
-plot(t,calka2,t,komy, t,mahy);
+plot(t,calka2,t,komy, t,mahy,t,kalmany);
 xlabel('Czas [s]')
 ylabel(['Wychylenie wokol osi Y [' char(176) ']'])
-legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego');
+legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego', 'Wynik dzialania filtru Kalmana');
 grid on
 
 figure(2)
-plot(t,calka1,t,komx,t,mahx);
+plot(t,calka1,t,komx,t,mahx,t,kalmanx);
 xlabel('Czas [s]')
 ylabel(['Wychylenie wokol osi Y [' char(176) ']'])
-legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego');
+legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego', 'Wynik dzialania filtru Kalmana');
 grid on
 
 
 fileID = fopen('exptable.txt','w');
 for i=1:length(komy)
-    if typ_filtru == 1
+  
         fprintf(fileID,'%f ',komy(i));
-        fprintf(fileID,'%f\n',komx(i));
-    end
-    if typ_filtru == 2
+        fprintf(fileID,'%f ',komx(i));
+ 
+    
+  
         fprintf(fileID,'%f ',mahy(i));
-        fprintf(fileID,'%f\n',mahx(i));
-    end
+        fprintf(fileID,'%f ',mahx(i));
+
+    
+ 
+        fprintf(fileID,'%f ',kalmany(i));
+        fprintf(fileID,'%f\n',kalmanx(i));
+
 end
 fclose(fileID);
