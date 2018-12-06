@@ -69,6 +69,7 @@ public class Program3D extends Applet implements ActionListener{
     OrbitBehavior ob = new OrbitBehavior(c, OrbitBehavior.REVERSE_ROTATE);
     ob.setSchedulingBounds(new BoundingSphere());
     universe.getViewingPlatform().setViewPlatformBehavior(ob);
+    
     add("Center", c);
          
     JPanel panel = new JPanel();
@@ -76,6 +77,7 @@ public class Program3D extends Applet implements ActionListener{
     
     start = new JButton("Start");
     start.addActionListener((ae) -> {
+      
         start.setEnabled(false);
         czas = 0f;
          new Thread(new Runnable(){
@@ -133,6 +135,11 @@ public class Program3D extends Applet implements ActionListener{
         }).start();
     });
     
+    JButton reset = new JButton("Reset kamery");
+    reset.addActionListener((ae) -> {
+        universe.getViewingPlatform().setNominalViewingTransform();
+    });
+    panel.add(reset);
     panel.add(start);
     czaslab = new JLabel("Czas: 0 s");
     panel.add(czaslab);
