@@ -63,7 +63,7 @@ for i = 1:size(pomiar, 1);
     
     Yf(i) = x_t_t(1);
 end
- 
+kalman = Yf;
 plot(t, Y, 'b', t, Yf, 'r',t,calka2,'g')
 title('Filtr Kalmana')
 xlabel('Czas')

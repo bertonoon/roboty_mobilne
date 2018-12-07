@@ -1,3 +1,9 @@
 *.asv
 *~
 PDF/
+*.tex
+artykul_grafiki/
+*.gz
+*.aux
+*.log
+*.out
