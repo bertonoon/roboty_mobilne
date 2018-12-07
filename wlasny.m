@@ -23,29 +23,14 @@ for i=2:length(ch1)
     calka3(i) = calka3(i-1) + ch6(i)*dt;
 end
 
-usredniony   = zeros(length(t),1);
-prosta       = zeros(length(t),1);
-akcel_m      = zeros(length(t),1);
 filtrowany   = zeros(length(t),1);
-filtrowany_m = zeros(length(t),1);
 akcel = atan2(ch1,ch3)*180/pi;
-
-% y1 = calka2(10);
-% y2 = calka2(length(t));
-% x1 = 10;
-% x2 = length(t);
-% 
-% A = [x1 1;x2 1];
-% B = [y1; y2];
-% 
-% Z = A\B;
-% kat = cot(Z(1));
 
 aproks  = polyfit(t,calka2,1);
 aproks2 = polyval(aproks, t);
 
 
-zyro_prosty = 1.05*(calka2 - aproks2);
+zyro_prosty = (calka2 - aproks2);
 
 for i=1:length(t) 
     if i < 2
@@ -59,10 +44,9 @@ for i=1:length(t)
 end
 
 plot( t, zyro_prosty,t,akcel,t,filtrowany)
-% plot( t, aproks2,t,aproks_akcel2);
 
-wlasny_filtr = filtrowany;
-% title('Filtr Kalmana')
-% xlabel('Czas')
-% ylabel('Sygnal mierzony')
-legend('¯yroskop prosty', 'Akcelerometr', 'Wlasny')
+
+title('Filtr W³asny')
+xlabel('Czas')
+ylabel('Sygnal mierzony')
+legend('¯yroskop prosty', 'Akcelerometr', 'Filtr Wlasny')
