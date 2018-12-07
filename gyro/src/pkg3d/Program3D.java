@@ -51,6 +51,12 @@ public class Program3D extends Applet implements ActionListener{
     Transform3D axis3Z;
     Transform3D axis3X;
     
+    TransformGroup kostka4;
+    TransformGroup kostka4_X;
+    TransformGroup kostka4_Z;
+    Transform3D axis4Z;
+    Transform3D axis4X;
+    
     float mnoznik = 1.0f;
     float rotZ = 0;
     BufferedReader br;
@@ -115,7 +121,12 @@ public class Program3D extends Applet implements ActionListener{
                     axis3X.rotX(X);
                     kostka3_X.setTransform(axis3X);
                     
-                    
+                    Z = Float.parseFloat(sep[6]) * (float)Math.PI/180;
+                    axis4Z.rotZ(Z);
+                    kostka4_Z.setTransform(axis4Z);
+                    X = Float.parseFloat(sep[7]) * (float)Math.PI/180;
+                    axis4X.rotX(X);
+                    kostka4_X.setTransform(axis4X);
                     
                     try {
                         Thread.sleep(4);
@@ -164,6 +175,12 @@ public class Program3D extends Applet implements ActionListener{
     kostka3_Z.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
     kostka3_X = new TransformGroup();
     kostka3_X.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
+    
+    kostka4 = new TransformGroup();
+    kostka4_Z = new TransformGroup();
+    kostka4_Z.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
+    kostka4_X = new TransformGroup();
+    kostka4_X.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
      
     axis1Z = new Transform3D();
     axis1X = new Transform3D();
@@ -171,6 +188,8 @@ public class Program3D extends Applet implements ActionListener{
     axis2X = new Transform3D();
     axis3Z = new Transform3D();
     axis3X = new Transform3D();
+    axis4Z = new Transform3D();
+    axis4X = new Transform3D();
    
      Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
      Color3f white = new Color3f(1,1,1);
@@ -189,7 +208,7 @@ public class Program3D extends Applet implements ActionListener{
         kostka1_X.setTransform(axis1Z);
         kostka1.addChild(kostka1_X);
         Transform3D offset = new Transform3D();
-        offset.setTranslation(new Vector3f(-0.4f*mnoznik,0f, 0f));
+        offset.setTranslation(new Vector3f(-0.6f*mnoznik,0f, 0f));
         kostka1.setTransform(offset);
         group.addChild(kostka1);
         
@@ -205,8 +224,7 @@ public class Program3D extends Applet implements ActionListener{
         kostka2_Z.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         kostka2_X.setTransform(axis2Z);
         kostka2.addChild(kostka2_X);
-      
-        offset.setTranslation(new Vector3f(0.4f*mnoznik,0f, 0f));
+        offset.setTranslation(new Vector3f(-0.2f*mnoznik,0f, 0f));
         kostka2.setTransform(offset);
         group.addChild(kostka2);
         
@@ -216,8 +234,21 @@ public class Program3D extends Applet implements ActionListener{
         kostka3_Z.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         kostka3_X.setTransform(axis3Z);
         kostka3.addChild(kostka3_X);
-      
+        offset.setTranslation(new Vector3f(0.2f*mnoznik,0f, 0f));
+        kostka3.setTransform(offset);
         group.addChild(kostka3);
+        
+        
+        Box box4 = new Box(0.1f*mnoznik, 0.1f*mnoznik, 0.1f*mnoznik, ap);
+        kostka4_Z.addChild(box4);
+        kostka4_X.addChild(kostka4_Z);
+        kostka4_Z.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        kostka4_X.setTransform(axis4Z);
+        kostka4.addChild(kostka4_X);
+        offset.setTranslation(new Vector3f(0.6f*mnoznik,0f, 0f));
+        kostka4.setTransform(offset);
+        group.addChild(kostka4);
+        
         
         /*
         Transform3D sciana_t = new Transform3D();
@@ -244,7 +275,7 @@ public class Program3D extends Applet implements ActionListener{
         
         float siatka = 0.05f*mnoznik;
         for (int i = -18; i < 23; i++){
-            if (i != 0 && i != 8 && i != -8   )
+            //if (i != 0 && i != 8 && i != -8   )
             {
                 lineX = new LineArray(2, LineArray.COORDINATES);
                 lineX.setCoordinate(0, new Point3f(i*siatka -0.1f, -0.1f*mnoznik, -0.1f*mnoznik));
@@ -253,7 +284,7 @@ public class Program3D extends Applet implements ActionListener{
             }
         }
         for (int i = 0; i < 35; i++){
-            if (i != 0     )
+            //if (i != 0     )
             {
                 lineX = new LineArray(2, LineArray.COORDINATES);
                 lineX.setCoordinate(0, new Point3f( -1f*mnoznik, -0.1f*mnoznik, i*siatka-0.1f));
@@ -263,7 +294,7 @@ public class Program3D extends Applet implements ActionListener{
         }
         
         for (int i = -18; i < 23; i++){
-            if (i != 0  && i != 8 && i != -8   )
+            //if (i != 0  && i != 8 && i != -8   )
             {
                 lineX = new LineArray(2, LineArray.COORDINATES);
                 lineX.setCoordinate(0, new Point3f(i*siatka -0.1f, -0.1f*mnoznik, -0.1f*mnoznik));
@@ -273,7 +304,7 @@ public class Program3D extends Applet implements ActionListener{
         }
         
           for (int i = 0; i < 35; i++){
-            if (i != 0   )
+            //if (i != 0   )
             {
                 lineX = new LineArray(2, LineArray.COORDINATES);
                 lineX.setCoordinate(0, new Point3f( -1f*mnoznik, i*siatka-0.1f, -0.1f*mnoznik));
@@ -287,8 +318,8 @@ public class Program3D extends Applet implements ActionListener{
         coloringAttributesG.setColor(new Color3f(Color.green));
         appearanceGreen.setColoringAttributes(coloringAttributesG);
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(-1000.0f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(1000.0f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(-1000.0f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(1000.0f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceGreen));
         
         Appearance appearanceRed = new Appearance();
@@ -296,16 +327,20 @@ public class Program3D extends Applet implements ActionListener{
         coloringAttributesR.setColor(new Color3f(Color.red));
         appearanceRed.setColoringAttributes(coloringAttributesR);
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(-0.1f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(-0.1f*mnoznik, 1000.0f*mnoznik, -0.1f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(-0.2f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(-0.2f*mnoznik, 1000.0f*mnoznik, -0.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceRed));
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(0.4f-0.1f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(0.4f-0.1f*mnoznik, 1000.0f*mnoznik, -0.1f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(0.6f-0.0f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(0.6f-0.0f*mnoznik, 1000.0f*mnoznik, -0.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceRed));
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(-0.4f*mnoznik-0.1f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(-0.4f*mnoznik-0.1f*mnoznik, 1000.0f*mnoznik, -0.1f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(-0.6f*mnoznik-0.0f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(-0.6f*mnoznik-0.0f*mnoznik, 1000.0f*mnoznik, -0.0f*mnoznik));
+        group.addChild(new Shape3D(lineX, appearanceRed));
+        lineX = new LineArray(2, LineArray.COORDINATES);
+        lineX.setCoordinate(0, new Point3f(0.2f*mnoznik-0.0f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(0.2f*mnoznik-0.0f*mnoznik, 1000.0f*mnoznik, -0.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceRed));
 
         Appearance appearanceBlue = new Appearance();
@@ -313,19 +348,21 @@ public class Program3D extends Applet implements ActionListener{
         coloringAttributesB.setColor(new Color3f(Color.blue));
         appearanceBlue.setColoringAttributes(coloringAttributesB);
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(-0.1f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(-0.1f*mnoznik, -0.1f*mnoznik, 1000.0f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(-0.2f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(-0.2f*mnoznik, -0.0f*mnoznik, 1000.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceBlue));
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(-0.1f*mnoznik-0.4f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(-0.1f*mnoznik-0.4f*mnoznik, -0.1f*mnoznik, 1000.0f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(0.2f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(0.2f*mnoznik, -0.0f*mnoznik, 1000.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceBlue));
         lineX = new LineArray(2, LineArray.COORDINATES);
-        lineX.setCoordinate(0, new Point3f(-0.1f*mnoznik+0.4f*mnoznik, -0.1f*mnoznik, -0.1f*mnoznik));
-        lineX.setCoordinate(1, new Point3f(-0.1f*mnoznik+0.4f*mnoznik, -0.1f*mnoznik, 1000.0f*mnoznik));
+        lineX.setCoordinate(0, new Point3f(-0.6f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(-0.6f*mnoznik, -0.0f*mnoznik, 1000.0f*mnoznik));
         group.addChild(new Shape3D(lineX, appearanceBlue));
-
-       
+        lineX = new LineArray(2, LineArray.COORDINATES);
+        lineX.setCoordinate(0, new Point3f(0.6f*mnoznik, -0.0f*mnoznik, -0.0f*mnoznik));
+        lineX.setCoordinate(1, new Point3f(0.6f*mnoznik, -0.0f*mnoznik, 1000.0f*mnoznik));
+        group.addChild(new Shape3D(lineX, appearanceBlue));
         
         
         Appearance a = new Appearance();
@@ -364,6 +401,17 @@ public class Program3D extends Applet implements ActionListener{
         text3t.setTranslation(new Vector3f(-0.06f, 0.0f, 0.10f));
         text3.setTransform(text3t);
         kostka3_Z.addChild(text3);
+        
+        text3D = new Text3D(f3d, new String("Filtr własny"), new Point3f(0f, 0.0f, 0.0f));
+        text3D.setCapability(Geometry.ALLOW_INTERSECT);
+        s3D1 = new Shape3D(text3D, a);
+        TransformGroup text4 = new TransformGroup();
+        text4.addChild(s3D1);
+        Transform3D text4t = new Transform3D();
+        text4t.setScale(0.02);
+        text4t.setTranslation(new Vector3f(-0.05f, 0.0f, 0.10f));
+        text4.setTransform(text4t);
+        kostka4_Z.addChild(text4);
         
         Color3f light1Color = new Color3f(1,0,0);
         
