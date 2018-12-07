@@ -1,3 +1,11 @@
+% % config % %
+
+%Szum
+v = 25;
+w = 25;
+
+% % % % % % %
+
 format compact
 format long 
 
@@ -23,9 +31,7 @@ A = [1 -dt; 0 1];
 B = [dt; 0];
 C = [1 0];
  
-%Szum
-v = 5;
-w = 10;
+
 V = [v*v*dt 0; 0 v*v*dt];
 R = w*w;
  
@@ -65,6 +71,7 @@ for i = 1:size(pomiar, 1);
 end
 kalman = Yf;
 plot(t, Y, 'b', t, Yf, 'r',t,calka2,'g')
+% axis([12 16 -10 15])
 title('Filtr Kalmana')
 xlabel('Czas')
 ylabel('Sygnal mierzony')
