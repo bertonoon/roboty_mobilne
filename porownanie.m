@@ -13,6 +13,7 @@ Kp = 3;
 w = 25;
 v = 25;
 
+
 % GENEROWANIE DO PLIKU(ANIMACJA 3D)
 
 % 1 - komplementarny, 2 - Mahony, 3 - Kalman
@@ -144,18 +145,62 @@ for i = 1:size(pomiar, 1);
     kalmanx(i) = x_t_t(1);
 end
 
+filtrowany   = zeros(length(t),1);
+akcel = atan2(ch1,ch3)*180/pi;
+
+aproks  = polyfit(t,calka2,1);
+aproks2 = polyval(aproks, t);
+
+
+zyro_prosty = (calka2 - aproks2);
+
+for i=1:length(t) 
+    if i < 2
+        filtrowany(i) = (zyro_prosty(i)+akcel(i))/2;
+    elseif i < length(t)     
+        temp = sort([akcel(i-1:i+1) zyro_prosty(i-1:i+1)]);
+        filtrowany(i) = (temp(3)+temp(4))/2;
+    else
+        filtrowany(i) = akcel(i);
+    end
+end
+wlasnyy = filtrowany;
+
+
+filtrowany   = zeros(length(t),1);
+akcel = atan2(ch2,ch3)*180/pi;
+
+aproks  = polyfit(t,calka1,1);
+aproks2 = polyval(aproks, t);
+
+
+zyro_prosty = (calka1 - aproks2);
+
+for i=1:length(t) 
+    if i < 2
+        filtrowany(i) = (zyro_prosty(i)+akcel(i))/2;
+    elseif i < length(t)     
+        temp = sort([akcel(i-1:i+1) zyro_prosty(i-1:i+1)]);
+        filtrowany(i) = (temp(3)+temp(4))/2;
+    else
+        filtrowany(i) = akcel(i);
+    end
+end
+wlasnyx = filtrowany;
+
+
 figure(1)
-plot(t,calka2,t,komy, t,mahy,t,kalmany);
+plot(t,calka2,t,komy, t,mahy,t,kalmany,t,wlasnyy );
 xlabel('Czas [s]')
 ylabel(['Wychylenie wokol osi Y [' char(176) ']'])
-legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego', 'Wynik dzialania filtru Kalmana');
+legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego', 'Wynik dzialania filtru Kalmana','Wynik dzialania filtru w³anego');
 grid on
 
 figure(2)
-plot(t,calka1,t,komx,t,mahx,t,kalmanx);
+plot(t,calka1,t,komx,t,mahx,t,kalmanx,t,wlasnyx);
 xlabel('Czas [s]')
 ylabel(['Wychylenie wokol osi Y [' char(176) ']'])
-legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego', 'Wynik dzialania filtru Kalmana');
+legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego', 'Wynik dzialania filtru Kalmana','Wynik dzialania filtru w³anego');
 grid on
 
 
