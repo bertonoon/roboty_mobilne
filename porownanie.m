@@ -45,7 +45,7 @@ for i=2:length(kom)
     I(i) = I(i-1) + Ki*dt*(acc-mah(i-1));
     mah(i) = alfa*mah(i-1) + (1-alfa)*acc + (ch5(i) + I(i))*dt;
 end
-plot(t,calka2,t,kom, t,mah);
+plot(t,calka2,t,kom, t,mah,t, wlasny_filtr,t,kalman);
 xlabel('Czas [s]')
 ylabel(['Wychylenie wokol osi Y [' char(176) ']'])
 legend('Proste calkowanie odczytu z zyroskopu', 'Wynik dzialania filtru komplementarnego','Wynik dzialania filtru Mahony`ego');
