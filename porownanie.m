@@ -218,7 +218,10 @@ for i=1:length(komy)
     
  
         fprintf(fileID,'%f ',kalmany(i));
-        fprintf(fileID,'%f\n',kalmanx(i));
+        fprintf(fileID,'%f',kalmanx(i));
+		
+		fprintf(fileID,'%f ',wlasnyy(i));
+        fprintf(fileID,'%f\n',wlasnyx(i));
 
 end
 fclose(fileID);
