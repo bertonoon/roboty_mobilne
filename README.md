@@ -4,6 +4,7 @@ Poszczególne pliki zawierają różne filtry:
 1) komplementarny.m - Filtr komplementarny
 2) mahony.m - Filtr Mahony'ego
 3) Kalman.m - Filtr Kalmana
+4) wlasny.m - Filtr własnego pomysłu
 
 Na początku każdego z tych plików znajdują się wartości konfiguracyjne służące do strojenia filtrów. Każdy z filtrów zestawiany jest z prostą całką odczytu z żyroskopu.
 
